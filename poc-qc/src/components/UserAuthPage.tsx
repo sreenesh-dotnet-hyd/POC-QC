@@ -35,7 +35,6 @@ const UserAuth: React.FC = () => {
         </div>
       </div>
 
-      {/* RIGHT SIDE - Auth Section */}
       <div className="flex w-full lg:w-1/2 items-center justify-center px-6 sm:px-12 py-12">
         <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 sm:p-10">
           {/* Header */}
