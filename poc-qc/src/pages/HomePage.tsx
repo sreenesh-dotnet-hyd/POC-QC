@@ -1,4 +1,4 @@
-import Outlet from '../components/Outlet';
+import Outlet from './Outlet';
 import SidePanel from "../components/SidePanel";
 import { useState } from "react";
 

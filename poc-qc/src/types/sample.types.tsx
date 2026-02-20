@@ -17,6 +17,9 @@ export interface SampleTimelineEntry {
   remarks?: string;
 }
 
+export type SamplePriority = 
+"Routine" | "Urgent" | "STAT";
+
 export interface Sample {
   sampleId: string;
   patientId: string;
@@ -24,8 +27,8 @@ export interface Sample {
   collectedBy: string;
   patientDob: string;
   patientGender: "Male" | "Female" | "Other";
-  sampleType: "Biopsy" | "Cytology" | "Blood" | "Tissue";
-  samplePriority: "Routine" | "Urgent" | "STAT";
+  sampleType: "Unstained"| "Stained" | "Tissue";
+  samplePriority: SamplePriority;
   sampleStatus: SampleStatusType;
   received: boolean;
   timeline: SampleTimelineEntry[];

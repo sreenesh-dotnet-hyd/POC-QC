@@ -2,6 +2,9 @@ import { LuHexagon } from "react-icons/lu";
 import { BiBarChartSquare } from "react-icons/bi";
 import { LuCircleUserRound } from "react-icons/lu";
 import { LuFlag } from "react-icons/lu";
+import { RiLogoutBoxRLine } from "react-icons/ri";
+import { PiMicroscope } from "react-icons/pi";
+
 
 export default function SidePanel({ content, setContent }) {
     return (
@@ -14,42 +17,60 @@ export default function SidePanel({ content, setContent }) {
                 </div>
                 <div className="flex flex-col gap-2">
                     <div className={`flex items-center gap-3 py-2 px-2
-                            ${content=="Dashboard"?"bg-[#101aca] text-white rounded-lg":"hover:bg-[#101aca]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer rounded-lg"}
-                        `} onClick={()=>setContent("Dashboard")}>
-                        
+                            ${content == "Dashboard" ? "bg-[#101aca] text-white rounded-lg" : "hover:bg-[#101aca]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer rounded-lg"}
+                        `} onClick={() => setContent("Dashboard")}>
+
                         <span className="text-2xl w-8 flex justify-center">
                             <BiBarChartSquare />
                         </span>
                         <span>Dashboard</span>
-                     
+
 
                     </div>
 
-                     <div className={`flex items-center gap-3 py-2 px-2 rounded-lg
-                            ${content=="AllSamples"?"bg-[#101aca] text-white rounded-lg":"hover:bg-[#101aca]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer rounded-lg"}}
-                        `} onClick={()=>setContent("AllSamples")}>
+                    <div className={`flex items-center gap-3 py-2 px-2 rounded-lg
+                            ${content == "AllSamples" ? "bg-[#101aca] text-white rounded-lg" : "hover:bg-[#101aca]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer rounded-lg"}}
+                        `} onClick={() => setContent("AllSamples")}>
                         <span className="text-2xl w-8 flex justify-center">
                             <LuHexagon />
                         </span>
                         <span>All Samples</span>
                     </div>
                     <div className={`flex items-center gap-3 py-2 px-2 rounded-lg
-                            ${content=="FlaggedSamples"?"bg-[#101aca] text-white rounded-lg":"hover:bg-[#101aca]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer rounded-lg"}}
-                        `} onClick={()=>setContent("FlaggedSamples")}>
+                            ${content == "FlaggedSamples" ? "bg-[#101aca] text-white rounded-lg" : "hover:bg-[#101aca]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer rounded-lg"}}
+                        `} onClick={() => setContent("FlaggedSamples")}>
                         <span className="text-2xl w-8 flex justify-center">
                             <LuFlag />
                         </span>
                         <span>Flagged Samples</span>
                     </div>
+                    <div className={`flex items-center gap-3 py-2 px-2 rounded-lg
+                            ${content == "Slides" ? "bg-[#101aca] text-white rounded-lg" : "hover:bg-[#101aca]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer rounded-lg"}}
+                        `} onClick={() => setContent("Slides")}>
+                        <span className="text-2xl w-8 flex justify-center">
+                            <PiMicroscope />
+                        </span>
+                        <span>Slides</span>
+                    </div>
+
                 </div>
 
 
             </div>
-             <div className={`flex items-center gap-3 py-2 px-2 `}>
-                <span className="text-2xl w-8 flex justify-center">
-                    <LuCircleUserRound />
-                </span>
-                <span>Account</span>
+            <div className="flex flex-col gap-2 ">
+                <div className={`flex items-center gap-3 py-2 px-2 hover:bg-[#101aca]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer rounded-lg `}>
+                    <span className="text-2xl w-8 flex justify-center">
+                        <LuCircleUserRound />
+                    </span>
+                    <span>Account</span>
+                </div>
+
+                <div className={`flex items-center gap-3 py-2 px-2 hover:bg-[#ca1010]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer rounded-lg `}>
+                    <span className="text-2xl w-8 flex justify-center">
+                        <RiLogoutBoxRLine />
+                    </span>
+                    <span>Log out</span>
+                </div>
             </div>
         </div>
     )
