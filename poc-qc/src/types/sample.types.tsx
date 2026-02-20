@@ -24,7 +24,7 @@ export interface Sample {
   collectedBy: string;
   patientDob: string;
   patientGender: "Male" | "Female" | "Other";
-  sampleType: "Biopsy" | "Cytology" | "Blood" | "Tissue";
+  sampleType: "Unstained" | "Stained" | "Tissue";
   samplePriority: "Routine" | "Urgent" | "STAT";
   sampleStatus: SampleStatusType;
   received: boolean;

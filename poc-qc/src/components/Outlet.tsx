@@ -1,5 +1,6 @@
 import AllSamplesPage from "../components/AllSamplesPage";
 import DashboardPage from "../components/DashboardPage";
+import Accounts from "./Accounts";
 import FlaggedSamplesPage from "./FlaggedSamplesPage";
 
 export default function Outlet({content}:{content: string}){
@@ -12,7 +13,8 @@ export default function Outlet({content}:{content: string}){
             <AllSamplesPage/>:null}
               {content=='FlaggedSamples'?
             <FlaggedSamplesPage/>:null}
-
+            {content=='Accounts'?
+            <Accounts/>:null}
         </div>
     )
 }

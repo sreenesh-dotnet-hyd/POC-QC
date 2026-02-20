@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import SignIn from "./SignIn";
-import SignUp from "./SignUp";
+import SignIn from "../components/SignIn";
+import SignUp from "../components/SignUp";
 
 const UserAuth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -8,9 +8,11 @@ const UserAuth: React.FC = () => {
   return (
     <div className="min-h-screen flex bg-gray-50">
       {/* LEFT SIDE - Branding Panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-900 to-indigo-900 text-white px-16 py-20 flex-col justify-between">
+      <div className="hidden lg:flex lg:w-1/2  bg-[#452dce] text-white px-16 py-20 flex-col justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-wide">Quantumcyte</h1>
+          <div className="w-54 h-18">
+            <img src="./qc-logo.webp" className="w-full h-full" alt="logo" />
+          </div>
           <p className="mt-2 text-blue-200 text-sm">
             Digital Slide Scanning & Laboratory Intelligence
           </p>
