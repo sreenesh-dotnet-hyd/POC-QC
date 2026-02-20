@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 const SignIn: React.FC = () => {
+
+    const navigate=useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -16,10 +19,27 @@ const SignIn: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login Data:", formData);
+
+    try {
+      const response = await axios.post(
+        "https://localhost:7113/api/User/login", // FIXED URL
+        {
+          email: formData.email,
+          password: formData.password,
+        },
+      );
+
+      localStorage.setItem("auth", response.data.token);
+      localStorage.setItem("userEmail", formData.email);
+
+      navigate("/home");
+    } catch (err: any) {
+      alert(err.response?.data?.message || "Login failed");
+    }
   };
+
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

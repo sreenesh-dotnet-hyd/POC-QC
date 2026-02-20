@@ -8,7 +8,7 @@ export const dummySamples: Sample[] = [
     collectedBy: "Dr. Mehta",
     patientDob: "1985-04-12",
     patientGender: "Male",
-    sampleType: "Stained",
+    sampleType: "Tissue",
     samplePriority: "Routine",
     sampleStatus: "aligned",
     received: true,

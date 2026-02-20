@@ -1,5 +1,6 @@
 import AllSamplesPage from "./AllSamplesPage";
 import DashboardPage from "./DashboardPage";
+import Accounts from "../components/Accounts";
 import FlaggedSamplesPage from "./FlaggedSamplesPage";
 import SlidesPage from "./SlidesPage";
 
@@ -14,6 +15,8 @@ export default function Outlet({content}:{content: string}){
             {content=='FlaggedSamples'?<FlaggedSamplesPage/>:null}
 
             {content=='Slides'?<SlidesPage/>:null}
+            {content=='Accounts'?
+            <Accounts/>:null}
 
         </div>
     )
