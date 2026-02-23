@@ -5,6 +5,7 @@ import { LuFlag } from "react-icons/lu";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { PiMicroscope } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
+import { FiAlertCircle } from "react-icons/fi";
 
 
 export default function SidePanel({ content, setContent }:{content:string, setContent:(content:string)=>void}) {
@@ -58,13 +59,22 @@ export default function SidePanel({ content, setContent }:{content:string, setCo
                         </span>
                         <span>Slides</span>
                     </div>
+                    <div className={`flex items-center gap-3 py-2 px-2 rounded-lg
+                            ${content == "ExceptionSlides" ? "bg-[#101aca] text-white rounded-lg" : "hover:bg-[#101aca]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer rounded-lg"}}
+                        `} onClick={() => setContent("ExceptionSlides")}>
+                        <span className="text-2xl w-8 flex justify-center">
+                            <FiAlertCircle />
+
+                        </span>
+                        <span>Exception Slides</span>
+                    </div>
 
                 </div>
 
 
             </div>
 
-        <div>
+         <div className="flex flex-col gap-2">
           <div
             className={`flex items-center gap-3 py-2 px-2 rounded-lg
                             ${content == "Accounts" ? "bg-[#101aca] text-white rounded-lg" : "hover:bg-[#101aca]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer rounded-lg"}
@@ -76,7 +86,13 @@ export default function SidePanel({ content, setContent }:{content:string, setCo
             </span>
             <span>Accounts</span>
           </div>
-          <div className={`flex items-center gap-3 py-2 px-2 `}>
+          <div 
+           className={`flex items-center gap-3 py-2 px-2 rounded-lg
+        hover:bg-[#ca1010]/60 hover:text-white transition duration-500 ease-in-out cursor-pointer
+                        `}
+                        
+                        onClick={handleLogout}>
+
             <span className="text-2xl w-8 flex justify-center">
               <LuLogOut />
             </span>

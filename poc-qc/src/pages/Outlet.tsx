@@ -3,6 +3,7 @@ import DashboardPage from "./DashboardPage";
 import Accounts from "../components/Accounts";
 import FlaggedSamplesPage from "./FlaggedSamplesPage";
 import SlidesPage from "./SlidesPage";
+import ExceptionSlidesPage from "./ExceptionSlidesPage";
 
 export default function Outlet({content}:{content: string}){
     return(
@@ -17,6 +18,8 @@ export default function Outlet({content}:{content: string}){
             {content=='Slides'?<SlidesPage/>:null}
             {content=='Accounts'?
             <Accounts/>:null}
+             {content=='ExceptionSlides'?
+            <ExceptionSlidesPage/>:null}
 
         </div>
     )

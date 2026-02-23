@@ -30,6 +30,6 @@ export interface Sample {
   sampleType: "Unstained"| "Stained" | "Tissue";
   samplePriority: SamplePriority;
   sampleStatus: SampleStatusType;
-  received: boolean;
+  received: boolean | null;
   timeline: SampleTimelineEntry[];
 }

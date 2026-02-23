@@ -12,9 +12,9 @@ interface ProtectedProps{
 }
 const ProtectedRoute: React.FC<ProtectedProps> = ({ children }) => {
   const isAuthenticated = localStorage.getItem("auth");
-  if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/" replace />;
+  // }
 
   return <>{children}</>;
 };
