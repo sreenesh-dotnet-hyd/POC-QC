@@ -1,12 +1,20 @@
-import { IoMdRefresh } from "react-icons/io";
-import { useEffect, useState } from "react";
+import { IoIosSearch, IoMdRefresh } from "react-icons/io";
+import { useEffect, useState, useMemo } from "react";
 import type { Slide } from "../types/SlideType";
 import type { Sample } from "../types/sample.types";
 import ExceptionSamplesSlidesTable from "../components/ExceptionSamplesSlidesTable";
+import SelectedSampleSlidesTable from "../components/SelectedSampleSlidesTable";
+import AddNewSlideModal from "../modals/AddNewSlideModal";
+import ViewSlideModal from "../modals/ViewSlideModal";
+import EditSlideModal from "../modals/EditSlideModal";
+import DeleteSlideModal from "../modals/DeleteSlideModal";
+import { fetchData } from "../data/SamplesData";
+import { fetchSlidesCountData, fetchSlidesData } from "../data/SlidesData";
+import { RiArrowGoBackFill } from "react-icons/ri";
 export default function ExceptionSlidesPage() {
 
 
-  const samplesData = [
+  const dummySamplesData: Sample[] = [
     {
       sampleId: "SMP-2026-001",
       patientId: "PAT-1001",
@@ -38,6 +46,7 @@ export default function ExceptionSlidesPage() {
       sampleStatus: "in_process",
       slideCount: 3,
       received: true,
+
       timeline: [
         { status: "entered", timestamp: "2026-02-18T07:45:00Z" },
         { status: "received", timestamp: "2026-02-18T08:10:00Z" },
@@ -56,6 +65,7 @@ export default function ExceptionSlidesPage() {
       sampleStatus: "approved",
       slideCount: 2,
       received: true,
+
       timeline: [
         { status: "entered", timestamp: "2026-02-17T11:00:00Z" },
         { status: "received", timestamp: "2026-02-17T11:25:00Z" },
@@ -76,15 +86,16 @@ export default function ExceptionSlidesPage() {
       sampleStatus: "rejected",
       slideCount: 4,
       received: true,
+
       timeline: [
         { status: "entered", timestamp: "2026-02-18T06:30:00Z" },
         { status: "received", timestamp: "2026-02-18T07:00:00Z" },
         { status: "rejected", timestamp: "2026-02-18T07:45:00Z", remarks: "Improper labeling" }
       ]
     }
-  ] ;
+  ];
 
-  const slidesData: Slide[] = [
+  const dummySlidesData: Slide[] = [
 
     {
       slideId: "SLD-001-01",
@@ -581,76 +592,290 @@ export default function ExceptionSlidesPage() {
 
   ];
 
-    const [exceptionSlides, setExceptionSlides] = useState<Slide[]>([]);
+  const [slidesData, setSlidesData] = useState<Slide[]>(dummySlidesData);
+  const [samplesData, setSamplesData] = useState<Sample[]>(dummySamplesData);
+  const [slidesCountData, setSlidesCountData] = useState<SlideCount[]>([]);
+
+
+  const [isAddNewClicked, setIsAddNewClicked] = useState<boolean>(false);
+  const [exceptionSlides, setExceptionSlides] = useState<Slide[]>([]);
   const [exceptionSamples, setExceptionSamples] = useState();
+  const [selectedSample, setSelectedSample] = useState<Sample | undefined>();
+  const [selectedSlide, setSelectedSlide] = useState<Slide | null>(null);
+  const [selectedSlides, setSelectedSlides] = useState<Slide[]>([]);
+  const [isViewClicked, setIsViewClicked] = useState(false);
+  const [isViewSlideClicked, setIsViewSlideClicked] = useState(false);
+  const [isEditClicked, setIsEditClicked] = useState(false);
+  const [isDeleteClicked, setIsDeleteClicked] = useState(false);
 
-  // const fetchExcpSamples = () => {
-  //   console.log("inside")
-  //   setExceptionSamples(
-  //     samplesData.filter((sample) =>
-  //       exceptionSlides.some(
-  //         (slide) => slide.sampleId === sample.sampleId
-  //       )
-  //     )
-  //   );
-  //   console.log("done", exceptionSamples);
-  // }
+    const [search, setSearch] = useState("");
+    const [statusFilter, setStatusFilter] = useState<SlideStatus | "ALL">("ALL");
+    const [methodFilter, setMethodFilter] = useState<"ALL" | "SCAN" | "MANUAL">("ALL");
+    const [blockedFilter, setBlockedFilter] = useState<"ALL" | "YES" | "NO">("ALL");
+    const [slideTypeFilter, setSlideTypeFilter] = useState("ALL");
 
-  const handleViewClick = ()=>{
-    console.log("hello");
-    }
+
+  useEffect(() => {
+    const loadAllData = async () => {
+      try {
+        const [samplesRes, slidesRes, slidesCountRes] =
+          await Promise.all([
+            fetchData(),
+            fetchSlidesData(),
+            fetchSlidesCountData(),
+          ]);
+
+        // Set base data
+        setSamplesData(samplesRes);
+        setSlidesData(slidesRes);
+        setSlidesCountData(slidesCountRes);
+
+        // 🔥 Use the freshly fetched slidesRes directly
+        const blockedSlides = slidesRes.filter(
+          (slide) => slide.isBlocked === true
+        );
+
+        setExceptionSlides(blockedSlides);
+
+        const filteredSamples = samplesRes.filter((sample) =>
+          blockedSlides.some(
+            (slide) => slide.sampleId === sample.sampleId
+          )
+        );
+
+        setExceptionSamples(filteredSamples);
+
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    loadAllData();
+  }, []);
+
+  const handleViewClick = (s: Sample) => {
+    console.log("true, ", s);
+    setSelectedSample(s);
+    setIsViewClicked(true);
+    setSelectedSlides(exceptionSlides.filter(slide => slide.sampleId === s.sampleId));
+  }
+  const handleSlideViewClick = (slide: Slide) => {
+    setSelectedSlide(slide);
+    setIsViewSlideClicked(true);
+  }
+
+  const handleSlideEditClick = (slide: Slide) => {
+    setSelectedSlide(slide);
+    setIsEditClicked(true);
+  }
+  const handleSlideDeleteClick = (slide: Slide) => {
+    setSelectedSlide(slide);
+    setIsDeleteClicked(true);
+  }
+
   const fetchExcepSlides = (slidesData) => {
     setExceptionSlides(slidesData.filter((slide => slide.isBlocked == true)))
   }
 
 
-
-  useEffect(() => {
-  const blockedSlides = slidesData.filter(
-    (slide) => slide.isBlocked === true
-  );
-
-  setExceptionSlides(blockedSlides);
-
-  const filteredSamples = samplesData.filter((sample) =>
-    blockedSlides.some(
-      (slide) => slide.sampleId === sample.sampleId
-    )
-  );
-
-
-  setExceptionSamples(filteredSamples);
-
-}, []);
-  return (<div className="flex flex-col gap-4 overflow-y-auto min-h-full w-full py-6 px-16 bg-[#f9f5f8]">
-    <div className="flex justify-between gap-4">
-      <div className="flex flex-col gap-4">
-        <span className="gothic-regular text-4xl text-[#101aca]">
-          Exception Slides
-        </span>
-        <span className="gothic-regular text-sm text-gray-400">
-          Home / Exception Slides
-        </span>
-      </div>
-
-      <div className="flex gap-4 mt-4">
-        <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#101aca] h-10 w-44 text-sm text-white rounded-xl hover:bg-[#0d16a8] transition">
-          <IoMdRefresh className="text-lg" />
-          Refresh
-        </button>
-      </div>
-    </div>
-
-{exceptionSamples!=undefined && exceptionSamples.length >= 0? (
-    <div className="mt-2 rounded-3xl overflow-hidden bg-[#e2e2f6] px-4 py-4">
-      <ExceptionSamplesSlidesTable
-        samplesData={exceptionSamples}
-        // onEdit={handleEditClick}
-        onView={handleViewClick}
-      // onDelete={handleTableDeleteClick}
-      />
-    </div>
-):null}
+    const filteredSlides = useMemo(() => {
+      return selectedSlides.filter((s) => {
   
-  </div>)
+        const matchesSearch =
+          s.slideId.toLowerCase().includes(search.toLowerCase()) ||
+          s.createdBy.toLowerCase().includes(search.toLowerCase());
+  
+        const matchesStatus =
+          statusFilter === "ALL" || s.status === statusFilter;
+  
+        const matchesMethod =
+          methodFilter === "ALL" || s.createdMethod === methodFilter;
+  
+        const matchesBlocked =
+          blockedFilter === "ALL" ||
+          (blockedFilter === "YES" && s.isBlocked) ||
+          (blockedFilter === "NO" && !s.isBlocked);
+  
+        const matchesSlideType =
+          slideTypeFilter === "ALL" || s.slideType === slideTypeFilter;
+  
+        return (
+          matchesSearch &&
+          matchesStatus &&
+          matchesMethod &&
+          matchesBlocked &&
+          matchesSlideType
+        );
+      });
+    }, [selectedSlides, search, statusFilter, methodFilter, blockedFilter, slideTypeFilter]);
+  
+    const uniqueSlideTypes = [...new Set(selectedSlides.map(s => s.slideType))];
+
+  
+
+
+  return (
+    <div className="flex flex-col gap-4 overflow-y-auto min-h-full w-full py-6 px-16 bg-[#f9f5f8]">
+      {isViewClicked == false ? (<>
+        <div className="flex justify-between gap-4">
+          <div className="flex flex-col gap-4">
+            <span className="gothic-regular text-4xl text-[#101aca]">
+              Exception Slides
+            </span>
+            <span className="gothic-regular text-sm text-gray-400">
+              Home / Exception Slides
+            </span>
+          </div>
+
+          <div className="flex gap-4 mt-4">
+            <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#101aca] h-10 w-44 text-sm text-white rounded-xl hover:bg-[#0d16a8] transition">
+              <IoMdRefresh className="text-lg" />
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        {exceptionSamples != undefined && exceptionSamples.length >= 0 ? (
+          <div className="mt-2 rounded-3xl overflow-hidden bg-[#e2e2f6] px-4 py-4">
+            <ExceptionSamplesSlidesTable
+              samplesData={exceptionSamples}
+              slidesData={slidesData}
+              // onEdit={handleEditClick}
+              onView={handleViewClick}
+            // onDelete={handleTableDeleteClick}
+            />
+          </div>
+        ) : null}
+      </>
+      ) : (<>
+        <div className="flex justify-between gap-4">
+          <div className="flex flex-col gap-4">
+            <span className="gothic-regular text-4xl text-[#101aca]">
+              Exception Slides
+            </span>
+            <span className="gothic-regular text-sm text-gray-400">
+              Home / Exception Slides / {selectedSample?.sampleId}
+            </span>
+          </div>
+
+          <div className="flex gap-4 mt-4">
+            <button
+              onClick={() => setSelectedSample(null)}
+              className="cursor-pointer flex items-center justify-center gap-2 border border-[#101aca] h-10 w-44 text-sm text-[#101aca] rounded-xl hover:bg-[#0d16a8] hover:text-white transition">
+              <RiArrowGoBackFill className="text-lg" />
+              Go back
+            </button>
+            <button className="cursor-pointer flex items-center justify-center gap-2 bg-[#101aca] h-10 w-44 text-sm text-white rounded-xl hover:bg-[#0d16a8] transition">
+              <IoMdRefresh className="text-lg" />
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <div className="relative flex flex-row gap-2">
+                  <input
+                    type="text"
+                    placeholder="Search by Slide ID"
+                    value={search ?? ""}
+                    onChange={(e) => setSearch(e.target.value)}
+                    // onChange={(e) => setSearchTerm(e.target.value)}
+                    className="h-10 w-80 px-4 pl-10 rounded-xl bg-white border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#101aca]"
+                  />            <IoIosSearch className="absolute text-xl top-2.5 left-2 text-gray-400" />
+        
+                  <div className="flex flex-wrap gap-4 mb-4 items-end">
+        
+                    {/* Status */}
+                    <div>
+                      <select
+                        className="rounded-xl bg-white border border-gray-200 px-3 py-2 text-sm"
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value as any)}
+                      >
+                        <option value="ALL">All Status</option>
+                        {Object.values<SlideStatus>([
+                          "CREATED", "QC_PENDING", "QC_IN_PROGRESS", "QC_PASSED",
+                          "QC_FAILED", "IN_ANALYSIS", "REVIEWED", "APPROVED",
+                          "REJECTED", "EXCEPTION", "ARCHIVED"
+                        ]).map(status => (
+                          <option key={status} value={status}>{status}</option>
+                        ))}
+                      </select>
+                    </div>
+        
+                    {/* Created Method */}
+                    <div>
+                      <select
+                        className="rounded-xl bg-white border border-gray-200 px-3 py-2 text-sm"
+                        value={methodFilter}
+                        onChange={(e) => setMethodFilter(e.target.value as any)}
+                      >
+                        <option value="ALL">All Methods</option>
+                        <option value="SCAN">SCAN</option>
+                        <option value="MANUAL">MANUAL</option>
+                      </select>
+                    </div>
+        
+                    {/* Blocked */}
+                    <div>
+                      <select
+                        className="rounded-xl bg-white border border-gray-200 px-3 py-2 text-sm bg-white"
+                        value={blockedFilter}
+                        onChange={(e) => setBlockedFilter(e.target.value as any)}
+                      >
+                        <option value="ALL">All Slides</option>
+                        <option value="YES">Yes</option>
+                        <option value="NO">No</option>
+                      </select>
+                    </div>
+        
+                    {/* Slide Type */}
+                    <div>
+                      <select
+                        className="rounded-xl bg-white border border-gray-200 px-3 py-2 text-sm"
+                        value={slideTypeFilter}
+                        onChange={(e) => setSlideTypeFilter(e.target.value)}
+                      >
+                        <option value="ALL">All Types</option>
+                        {uniqueSlideTypes.map(type => (
+                          <option key={type} value={type}>{type}</option>
+                        ))}
+                      </select>
+                    </div>
+        
+                  </div>
+                </div>
+
+        {exceptionSamples != undefined && exceptionSamples.length >= 0 ? (
+          <div className="mt-2 rounded-3xl overflow-hidden bg-[#e2e2f6] px-4 py-4">
+            <SelectedSampleSlidesTable
+              sampleSlides={selectedSlides}
+              onEdit={handleSlideEditClick}
+              onView={handleSlideViewClick}
+              onDelete={handleSlideDeleteClick}
+            />
+          </div>
+        ) : null}
+
+        {isAddNewClicked && (
+          <AddNewSlideModal sampleId={"0"} setIsAddNewClicked={setIsAddNewClicked} onSave={() => (console.log("added"))} />
+        )}
+
+        {isViewSlideClicked && selectedSlide && (
+          <ViewSlideModal slide={selectedSlide} setIsViewClicked={setIsViewSlideClicked} />
+        )}
+
+        {isEditClicked && selectedSlide && (
+          <EditSlideModal slide={selectedSlide} setIsEditClicked={setIsEditClicked} onSave={() => (console.log("added"))} />
+        )}
+
+        {isDeleteClicked && selectedSlide && (
+          <DeleteSlideModal slide={selectedSlide} setIsDeleteClicked={setIsDeleteClicked} onDelete={handleSlideDeleteClick} />
+        )}
+
+      </>)}
+
+
+
+
+    </div>)
 }

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { IoMdRefresh } from "react-icons/io";
 import { IoAdd } from "react-icons/io5";
 import { IoIosSearch } from "react-icons/io";
@@ -12,7 +12,13 @@ import AddNewSlideModal from "../modals/AddNewSlideModal";
 import ViewSlideModal from "../modals/ViewSlideModal";
 import DeleteSlideModal from "../modals/DeleteSlideModal";
 import EditSlideModal from "../modals/EditSlideModal";
+import { fetchData } from "../data/SamplesData";
+import { fetchSlidesCountData, fetchSlidesData } from "../data/SlidesData";
 
+type SlideCount = {
+  sampleId: string,
+  slideCount: number
+}
 
 export default function SlidesPage() {
   const [isAddNewClicked, setIsAddNewClicked] = useState<boolean>(false);
@@ -29,40 +35,9 @@ export default function SlidesPage() {
   const [blockedFilter, setBlockedFilter] = useState<"ALL" | "YES" | "NO">("ALL");
   const [slideTypeFilter, setSlideTypeFilter] = useState("ALL");
 
-  const filteredSlides = useMemo(() => {
-    return selectedSlides.filter((s) => {
-
-      const matchesSearch =
-        s.slideId.toLowerCase().includes(search.toLowerCase()) ||
-        s.createdBy.toLowerCase().includes(search.toLowerCase());
-
-      const matchesStatus =
-        statusFilter === "ALL" || s.status === statusFilter;
-
-      const matchesMethod =
-        methodFilter === "ALL" || s.createdMethod === methodFilter;
-
-      const matchesBlocked =
-        blockedFilter === "ALL" ||
-        (blockedFilter === "YES" && s.isBlocked) ||
-        (blockedFilter === "NO" && !s.isBlocked);
-
-      const matchesSlideType =
-        slideTypeFilter === "ALL" || s.slideType === slideTypeFilter;
-
-      return (
-        matchesSearch &&
-        matchesStatus &&
-        matchesMethod &&
-        matchesBlocked &&
-        matchesSlideType
-      );
-    });
-  }, [selectedSlides, search, statusFilter, methodFilter, blockedFilter, slideTypeFilter]);
-
   const uniqueSlideTypes = [...new Set(selectedSlides.map(s => s.slideType))];
 
-  const samplesData = [
+  const dummySamplesData:Sample[] = [
     {
       sampleId: "SMP-2026-001",
       patientId: "PAT-1001",
@@ -74,6 +49,7 @@ export default function SlidesPage() {
       samplePriority: "STAT",
       sampleStatus: "under_review",
       slideCount: 5,
+      received:true,
       timeline: [
         { status: "entered", timestamp: "2026-02-18T08:00:00Z" },
         { status: "received", timestamp: "2026-02-18T08:30:00Z" },
@@ -92,6 +68,8 @@ export default function SlidesPage() {
       samplePriority: "Urgent",
       sampleStatus: "in_process",
       slideCount: 3,
+            received:true,
+
       timeline: [
         { status: "entered", timestamp: "2026-02-18T07:45:00Z" },
         { status: "received", timestamp: "2026-02-18T08:10:00Z" },
@@ -109,6 +87,8 @@ export default function SlidesPage() {
       samplePriority: "Routine",
       sampleStatus: "approved",
       slideCount: 2,
+            received:true,
+
       timeline: [
         { status: "entered", timestamp: "2026-02-17T11:00:00Z" },
         { status: "received", timestamp: "2026-02-17T11:25:00Z" },
@@ -128,17 +108,17 @@ export default function SlidesPage() {
       samplePriority: "STAT",
       sampleStatus: "rejected",
       slideCount: 4,
+            received:true,
+
       timeline: [
         { status: "entered", timestamp: "2026-02-18T06:30:00Z" },
         { status: "received", timestamp: "2026-02-18T07:00:00Z" },
         { status: "rejected", timestamp: "2026-02-18T07:45:00Z", remarks: "Improper labeling" }
       ]
     }
-  ];
+  ] ;
 
-
-
-  const slidesData: Slide[] = [
+  const dummySlidesData: Slide[] = [
 
     {
       slideId: "SLD-001-01",
@@ -635,6 +615,84 @@ export default function SlidesPage() {
 
   ];
 
+  const [slidesData, setSlidesData] = useState<Slide[]>(dummySlidesData);
+  const [samplesData, setSamplesData] = useState<Sample[]>(dummySamplesData);
+  const [slidesCountData, setSlidesCountData] = useState<SlideCount[]>([]);
+ 
+  useEffect(()=>{
+
+    const loadSamples = async ()=>{
+    try{
+    const samplesRes = await fetchData();
+        setSamplesData(samplesRes);
+
+    }catch(err){
+      console.log(err);
+    }
+    }
+
+    const loadSlides = async ()=>{
+      try{
+        const slidesRes = await fetchSlidesData();
+        setSlidesData(slidesRes);
+      }catch(err){
+      console.log(err);
+    }
+    }
+
+    
+    const loadSlidesCount = async ()=>{
+      try{
+        const slidesRes = await fetchSlidesCountData();
+        setSlidesCountData(slidesRes);
+        console.log(slidesRes);
+      }catch(err){
+      console.log(err);
+    }
+    }
+
+    loadSamples();
+    loadSlides();
+    loadSlidesCount();
+  },[]);
+
+  const filteredSlides = useMemo(() => {
+    return selectedSlides.filter((s) => {
+
+      const matchesSearch =
+        s.slideId.toLowerCase().includes(search.toLowerCase()) ||
+        s.createdBy.toLowerCase().includes(search.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "ALL" || s.status === statusFilter;
+
+      const matchesMethod =
+        methodFilter === "ALL" || s.createdMethod === methodFilter;
+
+      const matchesBlocked =
+        blockedFilter === "ALL" ||
+        (blockedFilter === "YES" && s.isBlocked) ||
+        (blockedFilter === "NO" && !s.isBlocked);
+
+      const matchesSlideType =
+        slideTypeFilter === "ALL" || s.slideType === slideTypeFilter;
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesMethod &&
+        matchesBlocked &&
+        matchesSlideType
+      );
+    });
+  }, [selectedSlides, search, statusFilter, methodFilter, blockedFilter, slideTypeFilter]);
+
+
+
+
+
+ 
+
 
   const handleViewClick = (sample: Sample) => {
     setSelectedSample(sample);
@@ -693,6 +751,7 @@ export default function SlidesPage() {
         <div className="mt-2 rounded-3xl overflow-hidden bg-[#e2e2f6] px-4 py-4">
           <SampleSlidesTable
             samplesData={samplesData}
+            slidesCountData={slidesCountData}
             // onEdit={handleEditClick}
             onView={handleViewClick}
           // onDelete={handleTableDeleteClick}

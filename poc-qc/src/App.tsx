@@ -2,12 +2,15 @@ import React, { useState } from 'react'
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import './App.css'
-import HomePage from  './pages/HomePage'
+import HomePage from './pages/HomePage'
 import UserAuth from './pages/UserAuthPage'
 import NotFound from './pages/NotFound';
+import SamplesPage from './pages/SamplesPage';
+import SampleDetailsPage from './pages/SampleDetailsPage';
+import BatchesPage from './pages/BatchesPage';
 
 
-interface ProtectedProps{
+interface ProtectedProps {
   children: React.ReactNode;
 }
 const ProtectedRoute: React.FC<ProtectedProps> = ({ children }) => {
@@ -21,23 +24,36 @@ const ProtectedRoute: React.FC<ProtectedProps> = ({ children }) => {
 
 
 function App() {
-  
+
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<UserAuth />} />
+        <Route path="/login" element={<UserAuth />} />
 
         <Route
-          path="/home"
+          path="/"
           element={
             <ProtectedRoute>
               <HomePage />
             </ProtectedRoute>
           }
-        />
+        >
+          {/* Default page at "/" */}
+          <Route index element={<BatchesPage />} />
+
+          {/* Explicit batches route */}
+          <Route path="batches" element={<BatchesPage />} />
+
+          {/* Nested batch routes */}
+          <Route path="batches/:batchId" element={<SamplesPage />} />
+          <Route
+            path="batches/:batchId/samples/:sampleId"
+            element={<SampleDetailsPage />}
+          />
+        </Route>
         {/* Catch all unknown routes */}
-        <Route path="*" element={<NotFound/>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
