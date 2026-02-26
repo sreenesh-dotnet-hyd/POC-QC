@@ -24,7 +24,7 @@ export default function SampleDetailsPage() {
                 <NavLink to={`/batches`} className="underline cursor-pointer">Samples</NavLink>
                 <span className="mx-2"><IoMdArrowRoundForward /></span>
             
-                <NavLink to={`/batches/${activeBatchId}/samples/${{ activeSampleId }}`} className="underline cursor-pointer text-gray-500 font-medium">
+                <NavLink to={`/batches/${activeBatchId}/samples/${activeSampleId}`} className="underline cursor-pointer text-gray-500 font-medium">
                     Sample {activeSampleId}
                 </NavLink>
                 <span className="mx-2"><IoMdArrowRoundForward /></span>

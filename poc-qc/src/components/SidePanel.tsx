@@ -14,6 +14,8 @@ import { CgProfile } from "react-icons/cg";
 import { useState } from "react";
 import NewAccessionModal from "../modals/NewAccessionModal";
 import { NavLink } from "react-router-dom";
+import { LuScanBarcode } from "react-icons/lu";
+import { MdKeyboardArrowRight } from "react-icons/md";
 
 export default function SidePanel() {
     const navigate = useNavigate();
@@ -26,31 +28,33 @@ export default function SidePanel() {
 
 
     return (
-        <div className="flex flex-row gothic-regular justify-between items-center bg-white gap-4 w-full p-4 pr-20 border-b-3 border-gray-200">
+        <div className="flex flex-col gothic-regular justify-between items-center bg-[#4338E0] gap-4 max-w-[100vw] p-4 border-b-3 border-gray-200">
 
 
-            <div className="flex flex-row items-center gap-17">
+            <div className="flex flex-col items-center gap-10">
                 <div className="w-34 h-14">
                     <img src='./qc-logo.webp' className="w-full h-full" alt='logo' />
+                </div>
+                
+                <div className="relative">
+                    <input type="text" placeholder="Search" className="px-4 py-2 bg-[#564CE3] pr-12 border-2 border-[#6F67E7] rounded-3xl" />
+                    {/* <IoIosSearch className="absolute text-xl top-2.5 right-4 text-black" />
+                    <LuMic className="absolute text-xl top-2.5 right-12 text-black" /> */}
+                    <LuScanBarcode className="absolute text-xl top-3.5 right-5 text-black"  />
                 </div>
                 <div>
                     <button
                         onClick={() => setIsAddNewClicked(true)}
-                        className="flex items-center justify-center gap-2 bg-black/10 border border-black  h-10 w-24 py-1 px-4 text-sm text-black rounded-lg 
+                        className="flex items-center justify-center gap-2 bg-[#6960E6] h-10 w-24 py-1 px-4 text-sm text-white rounded-lg 
                         hover:bg-gray-400 cursor-pointer transition">
-                        <IoAdd className="text-lg" />
                         New
+                        <MdKeyboardArrowRight className="text-lg"/>
                     </button>
-                </div>
-                <div className="relative">
-                    <input type="text" placeholder="Search or Ask something" className="px-4 py-2 pr-90 border-2 border-gray-200 rounded-3xl" />
-                    <IoIosSearch className="absolute text-xl top-2.5 right-4 text-black" />
-                    <LuMic className="absolute text-xl top-2.5 right-12 text-black" />
                 </div>
             </div>
 
-            <div className="flex flex-row items-center gap-10">
-                <div className="flex flex-row h-8 gap-6">
+            <div className="flex flex-col items-center gap-10">
+                <div className="flex flex-col h-8 gap-6">
 
                     <NavLink
                         to="/batches"

@@ -36,7 +36,7 @@ export default function BatchesPage() {
 };
 
     return (
-        <div className="min-h-screen bg-white p-8">
+        <div className="min-h-screen w-[100vw] bg-white p-8">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-10">
                     <h1 className="text-5xl text-gray-800 font-[700]">Batches</h1>
