@@ -8,7 +8,7 @@ import NotFound from './pages/NotFound';
 import SamplesPage from './pages/SamplesPage';
 import SampleDetailsPage from './pages/SampleDetailsPage';
 import BatchesPage from './pages/BatchesPage';
-
+import SlideDetailsPage from "./pages/SlideDetailsPage"
 
 interface ProtectedProps {
   children: React.ReactNode;
@@ -47,10 +47,14 @@ function App() {
 
           {/* Nested batch routes */}
           <Route path="batches/:batchId" element={<SamplesPage />} />
+
           <Route
             path="batches/:batchId/samples/:sampleId"
             element={<SampleDetailsPage />}
           />
+         <Route path="batches/:batchId/samples/:sampleId/slides/:slideId" 
+         element={<SlideDetailsPage />} />
+
         </Route>
         {/* Catch all unknown routes */}
         <Route path="*" element={<NotFound />} />

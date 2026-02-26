@@ -1,87 +1,178 @@
-import React, { useState } from "react";
-import SignIn from "../components/SignIn";
-import SignUp from "../components/SignUp";
-
-const UserAuth: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
-
+import React, { useState, useContext } from "react";
+import { LiaIdCard } from "react-icons/lia";
+import axios from "../services/axiosConfig";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../auth/AuthContext";
+const ResponsiveLogin: React.FC = () => {
+  const navigate = useNavigate();
+  const auth = useContext(AuthContext);
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+ 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+ 
+  const handleSubmit = async (e: React.FormEvent) => {
+    navigate("/");
+    e.preventDefault();
+ 
+    try {
+      const response = await axios.post("/User/login", {
+        email: formData.username,
+        password: formData.password,
+      });
+ 
+      auth?.login(response.data.token);
+ 
+      // 🔥 AUDIT SUCCESS
+      await axios.post("/Audit", {
+        action: "LOGIN_SUCCESS",
+        entity: "User",
+        entityId: formData.username,
+      });
+ 
+      navigate("/home");
+    } catch (err: any) {
+      // 🔥 AUDIT FAILURE
+      await axios.post("/Audit", {
+        action: "LOGIN_FAILED",
+        entity: "User",
+        entityId: formData.username,
+      });
+ 
+      alert(err.response?.data?.message || "Login failed");
+    }
+  };
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      {/* LEFT SIDE - Branding Panel */}
-      <div className="hidden lg:flex lg:w-1/2  bg-[#452dce] text-white px-16 py-20 flex-col justify-between">
-        <div>
-          <div className="w-54 h-18">
-            <img src="./qc-logo.webp" className="w-full h-full" alt="logo" />
-          </div>
-          <p className="mt-2 text-blue-200 text-sm">
-            Digital Slide Scanning & Laboratory Intelligence
-          </p>
-        </div>
-
-        <div>
-          <h2 className="text-4xl font-semibold leading-tight">
-            Secure Enterprise Platform
-            <br />
-            for Modern Diagnostics
-          </h2>
-
-          <p className="mt-6 text-blue-200 text-sm max-w-md leading-relaxed">
-            Built for laboratory technicians and pathologists, Quantumcyte
-            streamlines slide processing, case management, and reporting
-            workflows with precision and reliability.
-          </p>
-        </div>
-
-        <div className="text-blue-300 text-sm">
-          © {new Date().getFullYear()} Quantumcyte Technologies
-        </div>
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
+      {/* Logo */}
+      <div className="mb-12 flex justify-center">
+        <img
+          src="/qc-logo.webp"
+          alt="QuantumCyte Logo"
+          className="w-40 sm:w-48 md:w-56 h-auto"
+        />
       </div>
-
-      <div className="flex w-full lg:w-1/2 items-center justify-center px-6 sm:px-12 py-12">
-        <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 sm:p-10">
-          {/* Header */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800">
-              {isLogin ? "Sign in to your account" : "Create a new account"}
-            </h2>
-            <p className="text-sm text-gray-500 mt-2">
-              {isLogin
-                ? "Access your laboratory dashboard securely."
-                : "Register as an authorized lab technician."}
-            </p>
-          </div>
-
-          {/* Toggle Tabs */}
-          <div className="flex bg-gray-100 rounded-lg p-1 mb-8">
-            <button
-              onClick={() => setIsLogin(true)}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition ${
-                isLogin
-                  ? "bg-white shadow text-blue-700"
-                  : "text-gray-500 hover:text-blue-600"
-              }`}
-            >
-              Sign In
-            </button>
-
-            <button
-              onClick={() => setIsLogin(false)}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition ${
-                !isLogin
-                  ? "bg-white shadow text-indigo-700"
-                  : "text-gray-500 hover:text-indigo-600"
-              }`}
-            >
-              Register
-            </button>
-          </div>
-
-          {/* Render Forms */}
-          {isLogin ? <SignIn /> : <SignUp />}
-        </div>
+ 
+      {/* Scan Badge */}
+      <button
+        className="
+          flex
+          items-center
+          justify-center
+          gap-2
+          border
+          border-gray-300
+          rounded-lg
+          px-6
+          py-3
+          mb-8
+          hover:bg-gray-50
+          transition
+          text-gray-700
+          font-medium
+        "
+      >
+        <LiaIdCard className="text-xl" />
+        Scan your badge
+      </button>
+ 
+      {/* Divider */}
+      <div className="flex items-center w-full max-w-sm md:max-w-md mb-8">
+        <div className="flex-1 h-px bg-gray-300"></div>
+        <span className="px-4 text-gray-400 text-sm">or</span>
+        <div className="flex-1 h-px bg-gray-300"></div>
       </div>
+ 
+      {/* Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-sm md:max-w-md space-y-6"
+      >
+        {/* Username */}
+        <div>
+          <label className="block text-sm text-gray-600 mb-2">Username</label>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            placeholder="username"
+            className="
+              w-full
+              border
+              border-gray-300
+              rounded-md
+              px-4
+              py-3
+              focus:outline-none
+              focus:ring-1
+              focus:ring-gray-400
+              focus:border-gray-400
+              transition
+            "
+          />
+        </div>
+ 
+        {/* Password */}
+        <div>
+          <label className="block text-sm text-gray-600 mb-2">Password</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="••••••••"
+            className="
+              w-full
+              border
+              border-gray-300
+              rounded-md
+              px-4
+              py-3
+              focus:outline-none
+              focus:ring-1
+              focus:ring-gray-400
+              focus:border-gray-400
+              transition
+            "
+          />
+        </div>
+ 
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-2">
+          <button
+            type="button"
+            className="text-sm text-gray-500 hover:text-gray-700 transition ml-6"
+          >
+            Forgot Password
+          </button>
+ 
+          <button
+            type="submit"
+            className="
+      bg-gray-800
+      hover:bg-gray-900
+      text-white
+      px-20
+      py-2
+      rounded-md
+      transition
+      font-medium
+    "
+          >
+            Login
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
-
-export default UserAuth;
+ 
+export default ResponsiveLogin;

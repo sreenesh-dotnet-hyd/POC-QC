@@ -14,26 +14,32 @@ const slides = [
 
 export default function SampleDetailsPage() {
        const params = useParams();
+       const navigate = useNavigate();
         const activeBatchId = params.batchId as string;
+        const activeSampleId = params.sampleId as string;
+
+        const handleClick = (slideId)=>{
+            navigate(`/batches/${activeBatchId}/samples/${activeSampleId}/slides/${slideId}`)
+        }
    
     return (
-        <div className="min-h-screen bg-gray-50 p-8">
+        <div className="min-h-screen bg-white p-8">
 
             <div className="text-sm text-gray-500 mb-4 flex gap-2 items-center">
                 <NavLink to={`/batches`}  className="underline cursor-pointer">Batches</NavLink>
                 <span className="mx-2"><IoMdArrowRoundForward/></span>
                 <NavLink to={`/batches/${activeBatchId}`} className="underline cursor-pointer">
-                    Batch 003818853
+                    Batch {activeBatchId}
                 </NavLink>
                 <span className="mx-2"><IoMdArrowRoundForward/></span>
                 <span className="text-gray-800 font-medium">
-                    Sample 0789456321
+                    Sample {activeSampleId}
                 </span>
             </div>
 
             <div className="flex items-center justify-between mb-6">
-                <h1 className="text-4xl font-semibold text-gray-900">
-                    Sample 0789456321
+                <h1 className="text-4xl font-bold text-gray-900">
+                    Sample {activeSampleId}
                 </h1>
 
                 <div className="flex items-center gap-6">
@@ -48,21 +54,22 @@ export default function SampleDetailsPage() {
                     </div>
                 </div>
             </div>
-
-            <div className="mb-8">
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                    <span className="px-3 py-1 bg-gray-200 rounded-lg">
+    
+            <div className="mb-8 flex flex-row items-center justify-center w-full">
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <span className="px-3 py-1 bg-gray-200 rounded-lg w-32">
                         Ready for Scans
                     </span>
                 </div>
 
-                <div className="flex items-center justify-between">
-                    {Array.from({ length: 9 }).map((_, i) => (
+                <div className="flex w-full items-center justify-between">
+                    {Array.from({ length: 8 }).map((_, i) => (
                         <div key={i} className="flex-1 flex items-center">
-                            <div className="w-4 h-4 rounded-full border-2 border-gray-400 bg-gray-200" />
+                           
                             {i !== 8 && (
                                 <div className="flex-1 h-0.5 border-2 border-gray-400 bg-gray-200" />
                             )}
+                             <div className="w-4 h-4 rounded-full border-2 border-gray-400 bg-gray-200" />
                         </div>
                     ))}
                 </div>
@@ -132,6 +139,7 @@ export default function SampleDetailsPage() {
                 {slides.map((slide, index) => (
                     <div
                         key={slide}
+                        onClick={()=>handleClick(slide)}
                         className={`flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition ${index !== slides.length - 1
                                 ? "border-b border-gray-200"
                                 : ""
